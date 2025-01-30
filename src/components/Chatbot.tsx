@@ -1,11 +1,10 @@
 import {useState} from "react";
 import ReactMarkdown from "react-markdown";
 import background from "../assets/background.png"
+import services from "../services/services";
 
 const Chatbot = () => {
-  const [messages, setMessages] = useState<{ text: string; user: string }[]>(
-    []
-  );
+  const [messages, setMessages] = useState<{ text: string; user: string }[]>([]);
   const [input, setInput] = useState("");
 
   const sendMessage = async () => {
@@ -18,12 +17,12 @@ const Chatbot = () => {
       setInput("");
 
       try {
-        let response: Response;
-        // Call the appropriate API based on the selected model
+        const response = await services.getChatbotResponse(userInput);
+        const botMessage = await response.data;
         
         setMessages((prevMessages) => [
           ...prevMessages,
-          { text: "Hello from Bot", user: "bot" },
+          { text: botMessage, user: "bot" },
         ]);
       } catch (error) {
         console.error("Error fetching AI response:", error);

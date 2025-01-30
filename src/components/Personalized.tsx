@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import doctor from "../assets/doctors.svg";
+import services from "../services/services";
 
-interface FormData {
+export interface FormData {
   age: string;
   gender: string;
   mobileOS: string;
@@ -36,6 +37,8 @@ const Personalized = () => {
     healthPrecautions: [],
   });
 
+  const [responseMessage, setResponseMessage] = useState("");
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -44,17 +47,26 @@ const Personalized = () => {
       setFormData((prevData) => ({
         ...prevData,
         [name]: checked
-          ? [...prevData[name], value]
-          : prevData[name].filter((val: string) => val !== value),
+          ? [...(prevData[name as keyof FormData] || []), value]
+          : (prevData[name as keyof FormData] as string[]).filter((val: string) => val !== value),
       }));
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
+
+    try {
+      const response = await services.returnFormData(formData);
+      setResponseMessage(response.data);
+      console.log("Data saved successfully:", response.data);
+
+    } catch (error) {
+      console.error("Error submitting form data:", error);
+      setResponseMessage("An error occurred while submitting the form.");
+    }
   };
 
   return (

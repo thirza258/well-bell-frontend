@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import WellBellLandingPage from "./components/Home";
 import Personalized from "./components/Personalized";
 import Chatbot from "./components/Chatbot";
