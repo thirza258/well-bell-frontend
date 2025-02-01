@@ -1,4 +1,4 @@
-import React from "react";
+
 import hero_image from "../assets/hero.svg"
 import mediation from "../assets/mediation.svg"
 import doctors from "../assets/doctors.svg"

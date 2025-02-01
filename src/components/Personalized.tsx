@@ -71,7 +71,7 @@ const Personalized = () => {
 
       const score = response.data.prediction;
       const description = response.data.description;
-      
+      console.log(responseMessage)
       navigate("/returnee", { state: { score, description } });
     } catch (error) {
       console.error("Error submitting form data:", error);
