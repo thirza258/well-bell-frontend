@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import doctor from "../assets/doctors.svg";
 import services from "../services/services";
+import { useNavigate } from "react-router-dom";
 
 export interface FormData {
   age: string;
@@ -17,9 +18,11 @@ export interface FormData {
   usageSymptoms: string[];
   symptomFrequency: string;
   healthPrecautions: string[];
+  performanceImpact: string;
 }
 
 const Personalized = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     age: "",
     gender: "",
@@ -35,6 +38,7 @@ const Personalized = () => {
     usageSymptoms: [],
     symptomFrequency: "",
     healthPrecautions: [],
+    performanceImpact: "",
   });
 
   const [responseMessage, setResponseMessage] = useState("");
@@ -48,7 +52,9 @@ const Personalized = () => {
         ...prevData,
         [name]: checked
           ? [...(prevData[name as keyof FormData] || []), value]
-          : (prevData[name as keyof FormData] as string[]).filter((val: string) => val !== value),
+          : (prevData[name as keyof FormData] as string[]).filter(
+              (val: string) => val !== value
+            ),
       }));
     } else {
       setFormData({ ...formData, [name]: value });
@@ -63,6 +69,10 @@ const Personalized = () => {
       setResponseMessage(response.data);
       console.log("Data saved successfully:", response.data);
 
+      const score = response.data.prediction;
+      const description = response.data.description;
+      
+      navigate("/returnee", { state: { score, description } });
     } catch (error) {
       console.error("Error submitting form data:", error);
       setResponseMessage("An error occurred while submitting the form.");
@@ -72,17 +82,26 @@ const Personalized = () => {
   return (
     <div className="flex">
       <div className="w-1/2">
-      <img src={doctor} alt="Health Ratings" className="w-full h-full object-cover rounded-lg" />
+        <img
+          src={doctor}
+          alt="Health Ratings"
+          className="w-full h-full object-cover rounded-lg"
+        />
       </div>
       <div className="w-1/2 max-w-md mx-auto p-4 overflow-y-auto">
-      <h1 className="text-2xl font-bold text-center mb-4">Personalized Recommendations</h1>
-      <p className="text-center mb-4 text-gray-600">
-        This form will determine your health and provide personalized recommendations based on your mobile phone usage habits. 
-        Please fill out all the fields accurately to get the best possible advice tailored to your needs. 
-        Your responses will help us understand how you use your mobile phone for educational purposes, 
-        the activities you engage in, and any symptoms you may experience due to prolonged usage. 
-        We aim to offer suggestions that can improve your overall well-being and enhance your learning experience.
-      </p>
+        <h1 className="text-2xl font-bold text-center mb-4">
+          Personalized Recommendations
+        </h1>
+        <p className="text-center mb-4 text-gray-600">
+          This form will determine your health and provide personalized
+          recommendations based on your mobile phone usage habits. Please fill
+          out all the fields accurately to get the best possible advice tailored
+          to your needs. Your responses will help us understand how you use your
+          mobile phone for educational purposes, the activities you engage in,
+          and any symptoms you may experience due to prolonged usage. We aim to
+          offer suggestions that can improve your overall well-being and enhance
+          your learning experience.
+        </p>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Age */}
           <div>
@@ -148,57 +167,57 @@ const Personalized = () => {
           </div>
 
           {/* Mobile Phone for Education */}
-            <div>
+          <div>
             <label className="block text-sm font-medium text-gray-700">
               Mobile Phone Use for Education
             </label>
             <div className="mt-2 space-y-1">
               <label className="inline-flex items-center">
-              <input
-                type="radio"
-                name="educationUse"
-                value="sometimes"
-                checked={formData.educationUse === "sometimes"}
-                onChange={handleChange}
-                className="form-radio"
-              />
-              <span className="">Sometimes</span>
+                <input
+                  type="radio"
+                  name="educationUse"
+                  value="Sometimes"
+                  checked={formData.educationUse === "Sometimes"}
+                  onChange={handleChange}
+                  className="form-radio"
+                />
+                <span className="">Sometimes</span>
               </label>
               <label className="inline-flex items-center ml-2">
-              <input
-                type="radio"
-                name="educationUse"
-                value="frequently"
-                checked={formData.educationUse === "frequently"}
-                onChange={handleChange}
-                className="form-radio"
-              />
-              <span >Frequently</span>
+                <input
+                  type="radio"
+                  name="educationUse"
+                  value="Frequently"
+                  checked={formData.educationUse === "Frequently"}
+                  onChange={handleChange}
+                  className="form-radio"
+                />
+                <span>Frequently</span>
               </label>
               <label className="inline-flex items-center ml-2">
-              <input
-                type="radio"
-                name="educationUse"
-                value="rarely"
-                checked={formData.educationUse === "rarely"}
-                onChange={handleChange}
-                className="form-radio"
-              />
-              <span >Rarely</span>
+                <input
+                  type="radio"
+                  name="educationUse"
+                  value="Rarely"
+                  checked={formData.educationUse === "Rarely"}
+                  onChange={handleChange}
+                  className="form-radio"
+                />
+                <span>Rarely</span>
               </label>
               <label className="inline-flex items-center ml-2">
-              <input
-                type="radio"
-                name="educationUse"
-                value="never"
-                checked={formData.educationUse === "never"}
-                onChange={handleChange}
-                className="form-radio"
-              />
-              <span className="">Never</span>
+                <input
+                  type="radio"
+                  name="educationUse"
+                  value="Never"
+                  checked={formData.educationUse === "Never"}
+                  onChange={handleChange}
+                  className="form-radio"
+                />
+                <span className="">Never</span>
               </label>
             </div>
-            </div>
+          </div>
 
           {/* Mobile Phone Activities */}
           <div>
@@ -210,30 +229,20 @@ const Personalized = () => {
                 <input
                   type="checkbox"
                   name="activities"
-                  value="social media"
-                  checked={formData.activities.includes("social media")}
+                  value="Social Media"
+                  checked={formData.activities.includes("Social Media")}
                   onChange={handleChange}
                   className="form-checkbox"
                 />
                 <span className="ml-2">Social Media</span>
               </label>
+
               <label className="inline-flex items-center ml-2">
                 <input
                   type="checkbox"
                   name="activities"
-                  value="education"
-                  checked={formData.activities.includes("education")}
-                  onChange={handleChange}
-                  className="form-checkbox"
-                />
-                <span className="">Education</span>
-              </label>
-              <label className="inline-flex items-center ml-2">
-                <input
-                  type="checkbox"
-                  name="activities"
-                  value="web browsing"
-                  checked={formData.activities.includes("web browsing") }
+                  value="Web Browsing"
+                  checked={formData.activities.includes("Web Browsing")}
                   onChange={handleChange}
                   className="form-checkbox"
                 />
@@ -243,12 +252,23 @@ const Personalized = () => {
                 <input
                   type="checkbox"
                   name="activities"
-                  value="messaging"
-                  checked={formData.activities.includes("messaging")}
+                  value="Messaging"
+                  checked={formData.activities.includes("Messaging")}
                   onChange={handleChange}
                   className="form-checkbox"
                 />
                 <span className="">Messaging</span>
+              </label>
+              <label className="inline-flex items-center ml-2">
+                <input
+                  type="checkbox"
+                  name="activities"
+                  value="All of these"
+                  checked={formData.activities.includes("All of these")}
+                  onChange={handleChange}
+                  className="form-checkbox"
+                />
+                <span className="">All of these</span>
               </label>
               {/* Add more activities */}
             </div>
@@ -295,9 +315,9 @@ const Personalized = () => {
                 <input
                   type="checkbox"
                   name="educationalApps"
-                  value="educational videos"
+                  value="Educational Videos"
                   checked={formData.educationalApps.includes(
-                    "educational videos"
+                    "Educational Videos"
                   )}
                   onChange={handleChange}
                   className="form-checkbox"
@@ -308,8 +328,8 @@ const Personalized = () => {
                 <input
                   type="checkbox"
                   name="educationalApps"
-                  value="language"
-                  checked={formData.educationalApps.includes("language")}
+                  value="Language"
+                  checked={formData.educationalApps.includes("Language")}
                   onChange={handleChange}
                   className="form-checkbox"
                 />
@@ -319,19 +339,21 @@ const Personalized = () => {
                 <input
                   type="checkbox"
                   name="educationalApps"
-                  value="productivity"
-                  checked={formData.educationalApps.includes("productivity")}
+                  value="Productivity Tools"
+                  checked={formData.educationalApps.includes(
+                    "Productivity Tools"
+                  )}
                   onChange={handleChange}
                   className="form-checkbox"
                 />
-                <span className="">Productivity</span>
+                <span className="">Productivity Tools</span>
               </label>
               <label className="inline-flex items-center ml-2">
                 <input
                   type="checkbox"
                   name="educationalApps"
-                  value="study planner"
-                  checked={formData.educationalApps.includes("study planner")}
+                  value="Study Planner"
+                  checked={formData.educationalApps.includes("Study Planner")}
                   onChange={handleChange}
                   className="form-checkbox"
                 />
@@ -346,29 +368,29 @@ const Personalized = () => {
               Daily Usage
             </label>
             <div className="mt-2 space-y-1">
-                <label className="inline-flex items-center">
+              <label className="inline-flex items-center">
                 <input
                   type="radio"
                   name="dailyUsage"
-                  value="< 1 hour"
-                  checked={formData.dailyUsage === "< 1 hour"}
+                  value="< 2 hours"
+                  checked={formData.dailyUsage === "< 2 hours"}
                   onChange={handleChange}
                   className="form-radio"
                 />
-                <span className="ml-2">&lt; 1 hour</span>
-                </label>
-                <label className="inline-flex items-center ml-4">
+                <span className="ml-2">&lt; 2 hour</span>
+              </label>
+              <label className="inline-flex items-center ml-4">
                 <input
                   type="radio"
                   name="dailyUsage"
-                  value="1-2 hours"
-                  checked={formData.dailyUsage === "1-2 hours"}
+                  value="2-4 hours"
+                  checked={formData.dailyUsage === "2-4 hours"}
                   onChange={handleChange}
                   className="form-radio"
                 />
-                <span className="ml-2">1-2 hours</span>
-                </label>
-                <label className="inline-flex items-center ml-4">
+                <span className="ml-2">2-4 hours</span>
+              </label>
+              <label className="inline-flex items-center ml-4">
                 <input
                   type="radio"
                   name="dailyUsage"
@@ -378,8 +400,8 @@ const Personalized = () => {
                   className="form-radio"
                 />
                 <span className="ml-2">4-6 hours</span>
-                </label>
-                <label className="inline-flex items-center ml-4">
+              </label>
+              <label className="inline-flex items-center ml-4">
                 <input
                   type="radio"
                   name="dailyUsage"
@@ -389,7 +411,7 @@ const Personalized = () => {
                   className="form-radio"
                 />
                 <span className="ml-2">&gt; 6 hours</span>
-                </label>
+              </label>
               {/* Add more options here */}
             </div>
           </div>
@@ -404,23 +426,47 @@ const Personalized = () => {
                 <input
                   type="radio"
                   name="usageDistraction"
-                  value="yes"
-                  checked={formData.usageDistraction === "yes"}
+                  value="Not Distracting"
+                  checked={formData.usageDistraction === "Not Distracting"}
                   onChange={handleChange}
                   className="form-radio"
                 />
-                <span className="ml-2">Yes</span>
+                <span className="ml-2">Not Distracting</span>
               </label>
               <label className="inline-flex items-center ml-4">
                 <input
                   type="radio"
                   name="usageDistraction"
-                  value="no"
-                  checked={formData.usageDistraction === "no"}
+                  value="While Studying"
+                  checked={formData.usageDistraction === "While Studying"}
                   onChange={handleChange}
                   className="form-radio"
                 />
-                <span className="ml-2">No</span>
+                <span className="ml-2">While Studying</span>
+              </label>
+              <label className="inline-flex items-center ml-4">
+                <input
+                  type="radio"
+                  name="usageDistraction"
+                  value="During Class Lectures"
+                  checked={
+                    formData.usageDistraction === "During Class Lectures"
+                  }
+                  onChange={handleChange}
+                  className="form-radio"
+                />
+                <span className="ml-2">During Class Lectures</span>
+              </label>
+              <label className="inline-flex items-center ml-4">
+                <input
+                  type="radio"
+                  name="usageDistraction"
+                  value="During Exams"
+                  checked={formData.usageDistraction === "During Exams"}
+                  onChange={handleChange}
+                  className="form-radio"
+                />
+                <span className="ml-2">During Exams</span>
               </label>
             </div>
           </div>
@@ -458,7 +504,7 @@ const Personalized = () => {
                 <input
                   type="checkbox"
                   name="usefulFeatures"
-                  value="internet access"
+                  value="Internet Access"
                   checked={formData.usefulFeatures.includes("internet access")}
                   onChange={handleChange}
                   className="form-checkbox"
@@ -497,52 +543,41 @@ const Personalized = () => {
               Beneficial Subjects
             </label>
             <div className="mt-2 space-y-1">
-                <label className="inline-flex items-center">
+              <label className="inline-flex items-center">
                 <input
                   type="checkbox"
                   name="beneficialSubjects"
-                  value="browsing materials"
+                  value="Browsing Material"
                   checked={formData.beneficialSubjects.includes(
-                  "browsing materials"
+                    "Browsing Material"
                   )}
                   onChange={handleChange}
                   className="form-checkbox"
                 />
-                <span className="ml-2">Browsing Materials</span>
-                </label>
-                <label className="inline-flex items-center ml-2">
+                <span className="ml-2">Browsing Material</span>
+              </label>
+              <label className="inline-flex items-center ml-2">
                 <input
                   type="checkbox"
                   name="beneficialSubjects"
-                  value="calculating"
-                  checked={formData.beneficialSubjects.includes("calculating")}
+                  value="Accounting"
+                  checked={formData.beneficialSubjects.includes("Accounting")}
                   onChange={handleChange}
                   className="form-checkbox"
                 />
-                <span className="ml-2">Calculating</span>
-                </label>
-                <label className="inline-flex items-center ml-2">
+                <span className="">Accounting</span>
+              </label>
+              <label className="inline-flex items-center ml-2">
                 <input
                   type="checkbox"
                   name="beneficialSubjects"
-                  value="reading"
-                  checked={formData.beneficialSubjects.includes("reading")}
+                  value="Reasarch"
+                  checked={formData.beneficialSubjects.includes("Reasarch")}
                   onChange={handleChange}
                   className="form-checkbox"
                 />
-                <span className="ml-2">Reading</span>
-                </label>
-                <label className="inline-flex items-center ml-2">
-                <input
-                  type="checkbox"
-                  name="beneficialSubjects"
-                  value="writing"
-                  checked={formData.beneficialSubjects.includes("writing")}
-                  onChange={handleChange}
-                  className="form-checkbox"
-                />
-                <span className="ml-2">Writing</span>
-                </label>
+                <span className="">Reasarch</span>
+              </label>
               {/* Add more subject options as needed */}
             </div>
           </div>
@@ -557,8 +592,8 @@ const Personalized = () => {
                 <input
                   type="checkbox"
                   name="usageSymptoms"
-                  value="sleep disturbance"
-                  checked={formData.usageSymptoms.includes("sleep disturbance")}
+                  value="Sleep disturbance"
+                  checked={formData.usageSymptoms.includes("Sleep disturbance")}
                   onChange={handleChange}
                   className="form-checkbox"
                 />
@@ -568,19 +603,19 @@ const Personalized = () => {
                 <input
                   type="checkbox"
                   name="usageSymptoms"
-                  value="anxiety"
-                  checked={formData.usageSymptoms.includes("anxiety")}
+                  value="Anxiety or Stress"
+                  checked={formData.usageSymptoms.includes("Anxiety or Stress")}
                   onChange={handleChange}
                   className="form-checkbox"
                 />
-                <span className="">Anxiety</span>
+                <span className="">Anxiety or Stress</span>
               </label>
               <label className="inline-flex items-center ml-2">
                 <input
                   type="checkbox"
                   name="usageSymptoms"
-                  value="headache"
-                  checked={formData.usageSymptoms.includes("headache") }
+                  value="Headache"
+                  checked={formData.usageSymptoms.includes("Headache")}
                   onChange={handleChange}
                   className="form-checkbox"
                 />
@@ -590,8 +625,8 @@ const Personalized = () => {
                 <input
                   type="checkbox"
                   name="usageSymptoms"
-                  value="all of these"
-                  checked={formData.usageSymptoms.includes("all of these")}
+                  value="All of these"
+                  checked={formData.usageSymptoms.includes("All of these")}
                   onChange={handleChange}
                   className="form-checkbox"
                 />
@@ -613,9 +648,10 @@ const Personalized = () => {
               className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
             >
               <option value="">Select Frequency</option>
-              <option value="never">Never</option>
-              <option value="sometimes">Sometimes</option>
-              <option value="frequently">Frequently</option>
+              <option value="Never">Never</option>
+              <option value="Rarely">Rarely</option>
+              <option value="Sometimes">Sometimes</option>
+              <option value="Frequently">Frequently</option>
             </select>
           </div>
 
@@ -630,8 +666,10 @@ const Personalized = () => {
                 <input
                   type="checkbox"
                   name="healthPrecautions"
-                  value="using blue light filter"
-                  checked={formData.healthPrecautions.includes("using blue light filter")}
+                  value="Using Blue Light filter"
+                  checked={formData.healthPrecautions.includes(
+                    "Using Blue Light filter"
+                  )}
                   onChange={handleChange}
                   className="form-checkbox"
                 />
@@ -641,8 +679,10 @@ const Personalized = () => {
                 <input
                   type="checkbox"
                   name="healthPrecautions"
-                  value="taking break during prolonged use"
-                  checked={formData.healthPrecautions.includes("taking break during prolonged use")}
+                  value="Taking Break during prolonged use"
+                  checked={formData.healthPrecautions.includes(
+                    "Taking Break during prolonged use"
+                  )}
                   onChange={handleChange}
                   className="form-checkbox"
                 />
@@ -652,8 +692,10 @@ const Personalized = () => {
                 <input
                   type="checkbox"
                   name="healthPrecautions"
-                  value="limiting screen time"
-                  checked={formData.healthPrecautions.includes("limiting screen time")}
+                  value="Limiting Screen Time"
+                  checked={formData.healthPrecautions.includes(
+                    "Limiting Screen Time"
+                  )}
                   onChange={handleChange}
                   className="form-checkbox"
                 />
@@ -663,14 +705,77 @@ const Personalized = () => {
                 <input
                   type="checkbox"
                   name="healthPrecautions"
-                  value="none of the above"
-                  checked={formData.healthPrecautions.includes("none of the above")}
+                  value="None of Above"
+                  checked={formData.healthPrecautions.includes("None of Above")}
                   onChange={handleChange}
                   className="form-checkbox"
                 />
-                <span className="ml-2">None of the above</span>
+                <span className="ml-2">None of Above</span>
               </label>
               {/* Add more health precaution options as needed */}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Performance Impact
+            </label>
+            <div className="mt-2 space-y-1">
+              <label className="inline-flex items-center">
+                <input
+                  type="radio"
+                  name="performanceImpact"
+                  value="Strongly Agree"
+                  checked={formData.performanceImpact === "Strongly Agree"}
+                  onChange={handleChange}
+                  className="form-radio"
+                />
+                <span>Strongly Agree</span>
+              </label>
+              <label className="inline-flex items-center ml-2">
+                <input
+                  type="radio"
+                  name="performanceImpact"
+                  value="Agree"
+                  checked={formData.performanceImpact === "Agree"}
+                  onChange={handleChange}
+                  className="form-radio"
+                />
+                <span>Agree</span>
+              </label>
+              <label className="inline-flex items-center ml-2">
+                <input
+                  type="radio"
+                  name="performanceImpact"
+                  value="Neutral"
+                  checked={formData.performanceImpact === "Neutral"}
+                  onChange={handleChange}
+                  className="form-radio"
+                />
+                <span>Neutral</span>
+              </label>
+              <label className="inline-flex items-center ml-2">
+                <input
+                  type="radio"
+                  name="performanceImpact"
+                  value="Disagree"
+                  checked={formData.performanceImpact === "Disagree"}
+                  onChange={handleChange}
+                  className="form-radio"
+                />
+                <span>Disagree</span>
+              </label>
+              <label className="inline-flex items-center ml-2">
+                <input
+                  type="radio"
+                  name="performanceImpact"
+                  value="Strongly Disagree"
+                  checked={formData.performanceImpact === "Strongly Disagree"}
+                  onChange={handleChange}
+                  className="form-radio"
+                />
+                <span>Strongly Disagree</span>
+              </label>
             </div>
           </div>
 
